@@ -10,33 +10,25 @@ import {
 } from '@mui/material';
 import { useNavigate } from 'react-router-dom';
 import Empty from '../assets/empty.jpg';
+import { INews } from '../types/news';
+import { sortNewsByCategories } from '../helpers/sortNewsByCategories';
+import { useAuthStore } from '../global/useAuthStore';
 
 const Articles = ({
     data,
     isLoading,
 }: {
-    data: {
-        id: number;
-        author: string;
-        title: string;
-        description: string;
-        url: string;
-        urlToImage: string;
-        content: string;
-        state: string;
-        sourceName: string;
-        publishedAt: Date;
-        category: string;
-        articleId: string;
-    }[];
+    data: INews[];
     isLoading: boolean;
 }) => {
     const navigate = useNavigate();
+    const user = useAuthStore((state) => state);
+    const sortedNewsArray = sortNewsByCategories(data, user.preferredTopics);
     return (
         <Box component="section" className="news-list">
             <Box className="news-list-center">
                 {!isLoading &&
-                    data.map((article) => {
+                    sortedNewsArray?.map((article) => {
                         const {
                             id,
                             title,
@@ -64,7 +56,7 @@ const Articles = ({
                                                 component="img"
                                                 alt={title}
                                                 height="140"
-                                                image={urlToImage ?? Empty}
+                                                image={urlToImage || Empty}
                                                 sx={{ marginBottom: 2 }}
                                             />
                                             <Typography

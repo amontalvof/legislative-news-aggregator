@@ -4,16 +4,14 @@ import {
     Route,
     Navigate,
 } from 'react-router-dom';
+import { ToastContainer } from 'react-toastify';
 import NewsList from './views/NewsList';
 import NewsDetails from './views/NewsDetails';
-import { QueryClient, QueryClientProvider } from '@tanstack/react-query';
-import { ReactQueryDevtools } from '@tanstack/react-query-devtools';
-
-const queryClient = new QueryClient();
+import 'react-toastify/dist/ReactToastify.css';
 
 const App = () => {
     return (
-        <QueryClientProvider client={queryClient}>
+        <>
             <Router>
                 <Routes>
                     <Route path="/" element={<Navigate to="/news?page=1" />} />
@@ -21,8 +19,19 @@ const App = () => {
                     <Route path="/article/:id" element={<NewsDetails />} />
                 </Routes>
             </Router>
-            <ReactQueryDevtools initialIsOpen={false} />
-        </QueryClientProvider>
+            <ToastContainer
+                position="top-right"
+                autoClose={5000}
+                hideProgressBar={false}
+                newestOnTop={false}
+                closeOnClick
+                rtl={false}
+                pauseOnFocusLoss
+                draggable
+                pauseOnHover
+                theme="light"
+            />
+        </>
     );
 };
 

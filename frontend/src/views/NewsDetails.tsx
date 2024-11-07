@@ -23,7 +23,7 @@ const NewsDetails = () => {
                 sx={{
                     minHeight: '30vh',
                     background: `url('${
-                        urlToImage ?? Empty
+                        urlToImage || Empty
                     }') center/cover no-repeat`,
                 }}
             />

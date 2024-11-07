@@ -1,22 +1,25 @@
 import { Dispatch, SetStateAction, useState } from 'react';
 import {
+    Autocomplete,
     Box,
+    Chip,
     FormControl,
     InputLabel,
     MenuItem,
     Select,
     SelectChangeEvent,
+    TextField,
 } from '@mui/material';
 import Title from './Title';
 import { categoryList, statesList } from '../constants/data';
-import DebounceInput from './DebounceInput';
 
 type FiltersProps = {
     state: string;
     setState: Dispatch<SetStateAction<string>>;
     topic: string;
     setTopic: Dispatch<SetStateAction<string>>;
-    setSearchKeyword: Dispatch<SetStateAction<string>>;
+    keywords: string[];
+    setKeywords: Dispatch<SetStateAction<string[]>>;
     navigateToPage: (newPage: number) => void;
 };
 
@@ -25,9 +28,11 @@ const Filters = ({
     setState,
     topic,
     setTopic,
-    setSearchKeyword,
+    keywords,
+    setKeywords,
     navigateToPage,
 }: FiltersProps) => {
+    const [inputValue, setInputValue] = useState<string>('');
     const [openState, setOpenState] = useState(false);
     const [openTopic, setOpenTopic] = useState(false);
 
@@ -60,6 +65,29 @@ const Filters = ({
         if (selector === 'topic') {
             setOpenTopic(true);
         }
+    };
+
+    const handleKeywordsChange = (
+        _event: React.ChangeEvent<{}>,
+        newValue: string[]
+    ) => {
+        setKeywords(newValue);
+        navigateToPage(1);
+    };
+
+    const handleInputChange = (
+        _event: React.ChangeEvent<{}>,
+        newInputValue: string
+    ) => {
+        setInputValue(newInputValue);
+    };
+
+    const handleBlur = () => {
+        if (inputValue.trim() !== '' && !keywords.includes(inputValue.trim())) {
+            setKeywords([...keywords, inputValue.trim()]);
+            setInputValue('');
+        }
+        navigateToPage(1);
     };
 
     return (
@@ -113,10 +141,24 @@ const Filters = ({
                     </Select>
                 </FormControl>
                 <FormControl sx={{ m: 1, minWidth: 120 }}>
-                    <DebounceInput
-                        debounceTimeout={750}
-                        handleDebounce={setSearchKeyword}
-                        navigateToPage={navigateToPage}
+                    <Autocomplete
+                        clearIcon={false}
+                        options={[]}
+                        freeSolo
+                        multiple
+                        value={keywords}
+                        inputValue={inputValue}
+                        onChange={handleKeywordsChange}
+                        onInputChange={handleInputChange}
+                        onBlur={handleBlur}
+                        renderTags={(value, props) =>
+                            value.map((option, index) => (
+                                <Chip label={option} {...props({ index })} />
+                            ))
+                        }
+                        renderInput={(params) => (
+                            <TextField label="Search by Keywords" {...params} />
+                        )}
                     />
                 </FormControl>
             </form>

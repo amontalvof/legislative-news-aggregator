@@ -1,12 +1,14 @@
 import { Request, Response } from 'express';
 import { fetchLegislationNews } from '../seed/script';
 import { connect } from '../database/connection';
+import { verify } from '../utils/jwt';
 
 export const populateArticles = async (req: Request, res: Response) => {
     try {
         const body = req.body;
         const { from, to, pageSize, token } = body;
-        if (process.env.TOKEN !== token) {
+        const isTokenValid = verify(token);
+        if (!isTokenValid) {
             return res.status(401).json({ message: 'Unauthorized' });
         }
         const articles = await fetchLegislationNews({ from, to, pageSize });

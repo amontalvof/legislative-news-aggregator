@@ -1,25 +1,28 @@
+import { baseApiUrl } from '../constants/data';
+
 export const resolveQueryUrl = ({
     state,
     topic,
-    searchKeyword,
+    searchKeywords,
     page = 1,
     pageSize = 10,
 }: {
     state: string;
     topic: string;
-    searchKeyword: string;
+    searchKeywords: string[];
     page?: number;
     pageSize?: number;
 }) => {
-    let url = `http://localhost:8080/news?page=${page}&pageSize=${pageSize}`;
+    let url = `${baseApiUrl}/news?page=${page}&pageSize=${pageSize}`;
     if (state) {
         url += `&state=${state}`;
     }
     if (topic) {
         url += `&category=${topic}`;
     }
-    if (searchKeyword) {
-        url += `&search=${searchKeyword}`;
+    if (searchKeywords.length > 0) {
+        const searchQuery = searchKeywords.join(',');
+        url += `&search=${searchQuery}`;
     }
     return url;
 };
