@@ -86,8 +86,8 @@ const Filters = ({
         if (inputValue.trim() !== '' && !keywords.includes(inputValue.trim())) {
             setKeywords([...keywords, inputValue.trim()]);
             setInputValue('');
+            navigateToPage(1);
         }
-        navigateToPage(1);
     };
 
     return (
