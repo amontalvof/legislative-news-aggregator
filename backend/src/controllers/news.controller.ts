@@ -51,7 +51,6 @@ export const retrieveArticles = async (req: Request, res: Response) => {
 
         if (search) {
             const keywords = (search as string).split(',').filter(Boolean);
-            console.log(keywords);
             const searchConditions = keywords
                 .map(() => `title LIKE ? OR description LIKE ?`)
                 .join(' OR ');
@@ -80,8 +79,6 @@ export const retrieveArticles = async (req: Request, res: Response) => {
             parseInt(pageSize as string),
             (parseInt(page as string) - 1) * parseInt(pageSize as string)
         );
-
-        console.log({ dataQuery, queryParams });
 
         const connection = await connect();
         const [countRows] = await connection.query(countQuery, queryParams);
