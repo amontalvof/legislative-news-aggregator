@@ -13,6 +13,7 @@ import { baseApiUrl } from '../constants/data';
 import { toast } from 'react-toastify';
 import { fetchWithoutToken } from '../helpers/fetch';
 import { useAuthStore } from '../global/useAuthStore';
+import { useLocation, useNavigate } from 'react-router-dom';
 
 type FormLoginProps = {
     handleClose: () => void;
@@ -35,6 +36,8 @@ const loginFormSchema = z.object({
 });
 
 const FormLogin = (props: FormLoginProps) => {
+    const location = useLocation();
+    const navigate = useNavigate();
     const { handleClose } = props;
     const setUser = useAuthStore((state) => state.setUser);
     const form = useForm<IFormValues>({
@@ -64,9 +67,16 @@ const FormLogin = (props: FormLoginProps) => {
         },
     });
 
+    const navigateToPage = (newPage: number) => {
+        const queryParams = new URLSearchParams(location.search);
+        queryParams.set('page', String(newPage));
+        navigate(`${location.pathname}?${queryParams.toString()}`);
+    };
+
     const onSubmit = (data: IFormValues) => {
         mutate({ ...data });
         handleClose();
+        navigateToPage(1);
     };
 
     return (

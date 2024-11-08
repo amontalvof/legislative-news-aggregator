@@ -13,11 +13,19 @@ export const retrieveArticles = async (req: Request, res: Response) => {
         return res.status(400).json({ errors: errors.array() });
     }
     try {
-        const { state, category, search, page = 1, pageSize = 10 } = req.query;
+        const {
+            state,
+            category,
+            search,
+            sort,
+            page = 1,
+            pageSize = 10,
+        } = req.query;
         const cacheKey = JSON.stringify({
             state,
             category,
             search,
+            sort,
             page,
             pageSize,
         });
@@ -42,27 +50,38 @@ export const retrieveArticles = async (req: Request, res: Response) => {
         }
 
         if (search) {
-            const keywords = Array.isArray(search) ? search : [search];
+            const keywords = (search as string).split(',').filter(Boolean);
+            console.log(keywords);
             const searchConditions = keywords
-                .map(
-                    () =>
-                        `MATCH(title, description) AGAINST(? IN NATURAL LANGUAGE MODE)`
-                )
+                .map(() => `title LIKE ? OR description LIKE ?`)
                 .join(' OR ');
             filters.push(`(${searchConditions})`);
-            queryParams.push(...keywords);
+            keywords.forEach((keyword) => {
+                queryParams.push(`%${keyword}%`, `%${keyword}%`);
+            });
         }
 
         const whereClause =
             filters.length > 0 ? `WHERE ` + filters.join(' AND ') : '';
 
-        const countQuery = `SELECT COUNT(*) as total ${baseQuery} ${whereClause}`;
+        let orderByClause = 'ORDER BY publishedAt DESC';
+        if (sort) {
+            const categories = (sort as string).split(',').filter(Boolean);
+            const sortConditions = categories
+                .map((_category) => `category = ? DESC`)
+                .join(', ');
+            orderByClause = `ORDER BY ${sortConditions}, publishedAt DESC`;
+            queryParams.push(...categories);
+        }
 
-        const dataQuery = `SELECT * ${baseQuery} ${whereClause} ORDER BY publishedAt DESC LIMIT ? OFFSET ?`;
+        const countQuery = `SELECT COUNT(*) as total ${baseQuery} ${whereClause}`;
+        const dataQuery = `SELECT * ${baseQuery} ${whereClause} ${orderByClause} LIMIT ? OFFSET ?`;
         queryParams.push(
             parseInt(pageSize as string),
             (parseInt(page as string) - 1) * parseInt(pageSize as string)
         );
+
+        console.log({ dataQuery, queryParams });
 
         const connection = await connect();
         const [countRows] = await connection.query(countQuery, queryParams);

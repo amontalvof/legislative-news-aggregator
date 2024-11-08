@@ -14,6 +14,7 @@ router.get(
         query('state').optional().isString().trim().escape(),
         query('topic').optional().isString().trim().escape(),
         query('search').optional().isString().trim().escape(),
+        query('sort').optional().isString().trim().escape(),
         query('page').optional().isInt({ min: 1 }).toInt(),
         query('pageSize').optional().isInt({ min: 1 }).toInt(),
     ],

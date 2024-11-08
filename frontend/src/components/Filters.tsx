@@ -2,6 +2,7 @@ import { Dispatch, SetStateAction, useState } from 'react';
 import {
     Autocomplete,
     Box,
+    capitalize,
     Chip,
     FormControl,
     InputLabel,
@@ -135,7 +136,7 @@ const Filters = ({
                         </MenuItem>
                         {categoryList.map((item: string) => (
                             <MenuItem key={item} value={item}>
-                                {item}
+                                {capitalize(item)}
                             </MenuItem>
                         ))}
                     </Select>

@@ -27,17 +27,20 @@ const NewsList = () => {
         type: '',
     });
 
+    const sortKeywords = user?.preferredTopics ?? [];
+
     const { data, isLoading, refetch } = useQuery<{
         rows: INews[];
         totalPages: number;
     }>({
-        queryKey: ['news', { state, topic, keywords, page }],
+        queryKey: ['news', { state, topic, keywords, page, sortKeywords }],
         queryFn: () =>
             fetchWithoutToken(
                 resolveQueryUrl({
                     state,
                     topic,
-                    searchKeywords: keywords,
+                    keywords,
+                    sortKeywords,
                     page,
                     pageSize: 8,
                 })

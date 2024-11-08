@@ -1,6 +1,7 @@
 import {
     Box,
     Button,
+    capitalize,
     Card,
     CardActions,
     CardContent,
@@ -24,6 +25,7 @@ const Articles = ({
     const navigate = useNavigate();
     const user = useAuthStore((state) => state);
     const sortedNewsArray = sortNewsByCategories(data, user.preferredTopics);
+
     return (
         <Box component="section" className="news-list">
             <Box className="news-list-center">
@@ -38,7 +40,10 @@ const Articles = ({
                             publishedAt,
                             category,
                         } = article;
-
+                        const handleNavigate = () =>
+                            navigate(`/article/${id}`, {
+                                state: { article },
+                            });
                         return (
                             <Card
                                 sx={{
@@ -51,7 +56,10 @@ const Articles = ({
                             >
                                 {!isLoading ? (
                                     <>
-                                        <CardContent>
+                                        <CardContent
+                                            onClick={handleNavigate}
+                                            sx={{ cursor: 'pointer' }}
+                                        >
                                             <CardMedia
                                                 component="img"
                                                 alt={title}
@@ -83,7 +91,8 @@ const Articles = ({
                                             )}
                                             {!!category && (
                                                 <Typography>
-                                                    Topic: {category}
+                                                    Topic:{' '}
+                                                    {capitalize(category)}
                                                 </Typography>
                                             )}
                                             {!!publishedAt && (
@@ -97,11 +106,7 @@ const Articles = ({
                                         </CardContent>
                                         <CardActions>
                                             <Button
-                                                onClick={() =>
-                                                    navigate(`/article/${id}`, {
-                                                        state: { article },
-                                                    })
-                                                }
+                                                onClick={handleNavigate}
                                                 size="small"
                                             >
                                                 Read More

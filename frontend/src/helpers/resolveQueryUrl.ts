@@ -3,13 +3,15 @@ import { baseApiUrl } from '../constants/data';
 export const resolveQueryUrl = ({
     state,
     topic,
-    searchKeywords,
+    keywords,
+    sortKeywords,
     page = 1,
     pageSize = 10,
 }: {
     state: string;
     topic: string;
-    searchKeywords: string[];
+    keywords: string[];
+    sortKeywords: string[];
     page?: number;
     pageSize?: number;
 }) => {
@@ -20,9 +22,13 @@ export const resolveQueryUrl = ({
     if (topic) {
         url += `&category=${topic}`;
     }
-    if (searchKeywords.length > 0) {
-        const searchQuery = searchKeywords.join(',');
+    if (keywords.length > 0) {
+        const searchQuery = keywords.join(',');
         url += `&search=${searchQuery}`;
+    }
+    if (sortKeywords.length > 0) {
+        const sortQuery = sortKeywords.join(',');
+        url += `&sort=${sortQuery}`;
     }
     return url;
 };

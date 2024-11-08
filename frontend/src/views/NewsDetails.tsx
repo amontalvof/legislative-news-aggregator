@@ -1,9 +1,11 @@
-import { Box, Link, Typography } from '@mui/material';
-import { useLocation } from 'react-router-dom';
+import { Box, Button, Link, Typography } from '@mui/material';
+import { useLocation, useNavigate } from 'react-router-dom';
+import ArrowBackIcon from '@mui/icons-material/ArrowBack';
 import Empty from '../assets/empty.jpg';
 
 const NewsDetails = () => {
     const location = useLocation();
+    const navigate = useNavigate();
     const { article } = location.state || {};
     const {
         author,
@@ -19,12 +21,25 @@ const NewsDetails = () => {
     const formattedContent = content?.split('… [')[0];
     return (
         <Box>
+            <Button
+                variant="contained"
+                startIcon={<ArrowBackIcon />}
+                onClick={() => navigate(-1)}
+                sx={{ margin: '20px' }}
+            >
+                Go Back
+            </Button>
             <Box
                 sx={{
-                    minHeight: '30vh',
-                    background: `url('${
-                        urlToImage || Empty
-                    }') center/cover no-repeat`,
+                    minHeight: { xs: '30vh', sm: '50vh' },
+                    background: {
+                        xs: `url('${
+                            urlToImage || Empty
+                        }') center/cover no-repeat`,
+                        sm: `url('${
+                            urlToImage || Empty
+                        }') center/contain no-repeat`,
+                    },
                 }}
             />
             <Box component="section" className="single-news-info">
@@ -65,6 +80,7 @@ const NewsDetails = () => {
                     )}
                 </Box>
             </Box>
+            <Box></Box>
         </Box>
     );
 };

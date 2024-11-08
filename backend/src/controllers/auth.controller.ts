@@ -55,14 +55,24 @@ export const loginUser = async (req: Request, res: Response) => {
         await connection.end();
 
         if ((rows as any).length === 0) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res
+                .status(401)
+                .json({
+                    message:
+                        'Invalid credentials. Please double-check your email and password.',
+                });
         }
 
         const user = (rows as any)[0];
         const isPasswordValid = await bcrypt.compare(password, user.password);
 
         if (!isPasswordValid) {
-            return res.status(401).json({ message: 'Invalid credentials' });
+            return res
+                .status(401)
+                .json({
+                    message:
+                        'Invalid credentials. Please double-check your email and password.',
+                });
         }
 
         const token = jwt.sign(
